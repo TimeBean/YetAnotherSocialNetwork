@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YASN.Domain", "YASN.Domain\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YASN.Application", "YASN.Application\YASN.Application.csproj", "{92F861B3-6177-4FEF-9EFE-A280891499C8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YASN.Infrastructure", "YASN.Infrastructure\YASN.Infrastructure.csproj", "{847598A5-0CC1-4039-93B2-15458461B0C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YASN.Presentation.Cli", "YASN.Presentation.Cli\YASN.Presentation.Cli.csproj", "{87732263-3D5C-40B3-9D6E-045BC6ED4FF8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{92F861B3-6177-4FEF-9EFE-A280891499C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92F861B3-6177-4FEF-9EFE-A280891499C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92F861B3-6177-4FEF-9EFE-A280891499C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{847598A5-0CC1-4039-93B2-15458461B0C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{847598A5-0CC1-4039-93B2-15458461B0C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{847598A5-0CC1-4039-93B2-15458461B0C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{847598A5-0CC1-4039-93B2-15458461B0C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87732263-3D5C-40B3-9D6E-045BC6ED4FF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87732263-3D5C-40B3-9D6E-045BC6ED4FF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87732263-3D5C-40B3-9D6E-045BC6ED4FF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87732263-3D5C-40B3-9D6E-045BC6ED4FF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -14,18 +14,23 @@ public class DatabaseProfileRepository : IProfileRepository
         _connectionString = connectionString;
     }
 
-    public Task<Profile?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Profile?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync(cancellationToken);
+
+        const string sql = "SELECT * FROM identity.profiles WHERE id = @id";
+        return await connection.QueryFirstOrDefaultAsync<Profile>(new  CommandDefinition(sql, new { id }, cancellationToken: cancellationToken));
     }
 
     public async Task<Profile?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
 
-        var profile = await connection.QueryFirstOrDefaultAsync<Profile>(
-            "SELECT * FROM identity.profiles WHERE username = @username",
-            new { username });
+        const string sql = "SELECT * FROM identity.profiles WHERE username = @username";
+
+        var profile = await connection.QueryFirstOrDefaultAsync<Profile>(new CommandDefinition(sql, new { username },
+            cancellationToken: cancellationToken));
 
         return profile;
     }
@@ -42,7 +47,8 @@ public class DatabaseProfileRepository : IProfileRepository
             WHERE username = @username
         );";
 
-        return await connection.ExecuteScalarAsync<bool>(sql, new { username });
+        return await connection.ExecuteScalarAsync<bool>(new CommandDefinition(sql, new { username },
+            cancellationToken: cancellationToken));
     }
 
     public async Task<Guid> AddAsync(Profile profile, CancellationToken cancellationToken = default)
@@ -55,16 +61,45 @@ public class DatabaseProfileRepository : IProfileRepository
         VALUES (@Username, @Description)
         RETURNING id;";
 
-        return await connection.ExecuteScalarAsync<Guid>(sql, profile);
+        return await connection.ExecuteScalarAsync<Guid>(new CommandDefinition(sql, profile,
+            cancellationToken: cancellationToken));
     }
 
-    public Task UpdateAsync(Profile profile, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(Profile profile, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync(cancellationToken);
+
+        const string sql = @"
+        UPDATE identity.profiles
+        SET username = @Username, description = @Description
+        where id = @Id;";
+
+        var rows = await connection.ExecuteAsync(new CommandDefinition(sql,
+            new { username = profile.Username, description = profile.Description, id = profile.Id },
+            cancellationToken: cancellationToken));
+
+        if (rows == 0)
+        {
+            throw new Exception($"Profile '{profile.Id}' was not found.");
+        }
     }
 
-    public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync(cancellationToken);
+
+        const string sql = @"
+        DELETE FROM identity.profiles 
+        WHERE id = @id";
+
+        var rows = await connection.ExecuteAsync(new CommandDefinition(sql, new { id },
+            cancellationToken: cancellationToken));
+
+        if (rows == 0)
+        {
+            throw new Exception($"Profile '{id}' was not found.");
+        }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using YASN.Application.Users.Profile.Create;
+using YASN.Application.Users.Profile.Remove.Username;
 using YASN.Domain.Repository;
 using YASN.Infrastructure;
 
@@ -20,11 +21,22 @@ namespace YASN.Presentation.Cli
             Console.Write("Enter username: ");
             var username = Console.ReadLine();
 
+            Guid profileId;
             if (!string.IsNullOrWhiteSpace(username))
             {
-                var profileId = await mediator.Send(new CreateProfileCommand(username));
+                profileId = await mediator.Send(new CreateProfileCommand(username));
                 Console.WriteLine($"Created profile: {profileId}");
             }
+            else
+            {
+                throw new NullReferenceException();
+            }
+            
+            Console.Write("Ready delete profile?");
+            Console.ReadLine();
+
+            await mediator.Send(new RemoveProfileByIdCommand(profileId));
+            Console.WriteLine($"Deleted profile: {profileId}");
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -33,13 +45,13 @@ namespace YASN.Presentation.Cli
                 {
                     var connectionString = context.Configuration.GetConnectionString("DefaultConnection")
                                            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-                        
-                    Console.WriteLine(connectionString);
                     
                     services.AddMediatR(cfg =>
                         cfg.RegisterServicesFromAssembly(typeof(CreateProfileHandler).Assembly));
-
-                    services.AddScoped<IProfileRepository>(sp =>
+                    services.AddMediatR(cfg =>
+                        cfg.RegisterServicesFromAssembly(typeof(RemoveProfileHandler).Assembly));
+                    
+                    services.AddScoped<IProfileRepository>(_ =>
                         new DatabaseProfileRepository(connectionString));
                 });
     }

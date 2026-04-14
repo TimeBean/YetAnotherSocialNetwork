@@ -14,7 +14,7 @@ public class CreateProfileHandler : IRequestHandler<CreateProfileCommand, Guid>
 
     public async Task<Guid> Handle(CreateProfileCommand createProfileCommand, CancellationToken cancellationToken)
     {
-        var exists = await _profileRepository.ExistsByUsernameAsync(createProfileCommand.Username, cancellationToken);
+        var exists = await _profileRepository.ExistsAsync(createProfileCommand.Username, cancellationToken);
         
         if (exists)
         {

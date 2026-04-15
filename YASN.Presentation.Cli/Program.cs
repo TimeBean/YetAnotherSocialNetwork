@@ -5,40 +5,37 @@ using Microsoft.Extensions.Hosting;
 using YASN.Application.Users.Profile.Create;
 using YASN.Application.Users.Profile.Remove;
 using YASN.Application.Users.Profile.Update;
+using YASN.Application.Users.UserCredential.Create;
+using YASN.Application.Users.UserCredential.VerifyUserCredential;
 using YASN.Domain.Repository;
-using YASN.Infrastructure;
+using YASN.Domain.Service;
+using YASN.Infrastructure.Repository;
+using YASN.Infrastructure.Service;
 
 namespace YASN.Presentation.Cli
 {
     internal class Program
     {
+        private static IMediator? _mediator;
+
         private static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
 
             using var scope = host.Services.CreateScope();
-            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-            Console.Write("Enter username: ");
+            Console.Write("username: ");
             var username = Console.ReadLine();
+            Console.Write("password: ");
+            var password = Console.ReadLine();
+            /*var saltBytes = RandomNumberGenerator.GetBytes(32);
+            var salt = Convert.ToBase64String(saltBytes);
 
-            var profileId = await mediator.Send(new CreateProfileCommand(username!));
-            Console.WriteLine($"Created profile: {profileId}");
+            await _mediator.Send(new CreateAccountCommand(username!, password!, salt));*/
+            var verify = await _mediator.Send(new VerifyUserCredentialCommand(username!, password!));
 
-            Console.Write("Ready change username?");
-            Console.ReadLine();
-
-            Console.Write("Enter username: ");
-            var newUsername = Console.ReadLine();
-
-            await mediator.Send(new UpdateProfileUsernameCommand(profileId, newUsername!));
-            Console.WriteLine($"Username changed for {profileId}");
-            
-            Console.Write("Ready delete profile?");
-            Console.ReadLine();
-
-            await mediator.Send(new RemoveProfileByIdCommand(profileId));
-            Console.WriteLine($"Deleted profile: {profileId}");
+            Console.WriteLine(verify);
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -53,9 +50,16 @@ namespace YASN.Presentation.Cli
                         cfg.RegisterServicesFromAssembly(typeof(CreateProfileHandler).Assembly));
                     services.AddMediatR(cfg =>
                         cfg.RegisterServicesFromAssembly(typeof(RemoveProfileHandler).Assembly));
+                    services.AddMediatR(cfg =>
+                        cfg.RegisterServicesFromAssembly(typeof(UpdateProfileHandler).Assembly));
+                    services.AddMediatR(cfg =>
+                        cfg.RegisterServicesFromAssembly(typeof(CreateUserCredentialHandler).Assembly));
 
                     services.AddScoped<IProfileRepository>(_ =>
                         new DatabaseProfileRepository(connectionString));
+                    services.AddScoped<IUserCredentialRepository>(_ =>
+                        new DatabaseUserCredentialRepository(connectionString));
+                    services.AddSingleton<IPasswordService>(_ => new PasswordService());
                 });
     }
 }

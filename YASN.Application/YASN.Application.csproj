@@ -8,10 +8,15 @@
 
     <ItemGroup>
       <ProjectReference Include="..\YASN.Domain\YASN.Domain.csproj" />
+      <ProjectReference Include="..\YASN.Infrastructure\YASN.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="MediatR" Version="14.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Users\Account\Update\" />
     </ItemGroup>
 
 </Project>

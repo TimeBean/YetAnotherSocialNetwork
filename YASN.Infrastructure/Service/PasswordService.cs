@@ -22,11 +22,11 @@ public class PasswordService : IPasswordService
         return Convert.ToBase64String(hash);
     }
 
-    public bool VerifyHash(string hash, string password, string salt)
+    public bool VerifyHash(string stored_hash, string password, string salt)
     {
         var computedHash = ComputeHash(password, salt);
 
-        var hashBytes = Convert.FromBase64String(hash);
+        var hashBytes = Convert.FromBase64String(stored_hash);
         var computedBytes = Convert.FromBase64String(computedHash);
 
         return CryptographicOperations.FixedTimeEquals(hashBytes, computedBytes);

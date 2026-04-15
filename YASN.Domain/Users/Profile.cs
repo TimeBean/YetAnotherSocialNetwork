@@ -14,4 +14,12 @@ public class Profile
         Description = description;
         Created = DateTime.UtcNow;
     }
+    
+    private Profile(Guid id, string username, string? description, DateTime created)
+    {
+        Id = id;
+        Username = username;
+        Description = description;
+        Created = created;
+    }
 }

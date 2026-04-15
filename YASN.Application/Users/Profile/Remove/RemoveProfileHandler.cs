@@ -21,7 +21,7 @@ public class RemoveProfileHandler : IRequestHandler<RemoveProfileByIdCommand>, I
             throw new Exception($"Profile with id:{byIdCommand.Id} does not exists");
         }
         
-        await _profileRepository.DeleteAsync(byIdCommand.Id, cancellationToken);
+        await _profileRepository.RemoveAsync(byIdCommand.Id, cancellationToken);
     }
 
     public async Task Handle(RemoveProfileByUsernameCommand byUsernameCommand, CancellationToken cancellationToken)
@@ -33,6 +33,6 @@ public class RemoveProfileHandler : IRequestHandler<RemoveProfileByIdCommand>, I
             throw new Exception($"Profile with username:{byUsernameCommand.Username} does not exists");
         }
         
-        await _profileRepository.DeleteAsync(byUsernameCommand.Username, cancellationToken);
+        await _profileRepository.RemoveAsync(byUsernameCommand.Username, cancellationToken);
     }
 }

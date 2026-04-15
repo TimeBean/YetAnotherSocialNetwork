@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using YASN.Application.Users.Profile.Create;
-using YASN.Application.Users.Profile.Remove.Username;
+using YASN.Application.Users.Profile.Remove;
 using YASN.Domain.Repository;
 using YASN.Infrastructure;
 

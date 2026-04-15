@@ -1,5 +1,5 @@
 using MediatR;
 
-namespace YASN.Application.Users.Profile.Remove.Username;
+namespace YASN.Application.Users.Profile.Remove;
 
 public record RemoveProfileByUsernameCommand(string Username) : IRequest;

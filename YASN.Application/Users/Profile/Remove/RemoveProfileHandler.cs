@@ -1,7 +1,7 @@
 using MediatR;
 using YASN.Domain.Repository;
 
-namespace YASN.Application.Users.Profile.Remove.Username;
+namespace YASN.Application.Users.Profile.Remove;
 
 public class RemoveProfileHandler : IRequestHandler<RemoveProfileByIdCommand>, IRequestHandler<RemoveProfileByUsernameCommand>
 {

@@ -101,6 +101,46 @@ public class DatabaseProfileRepository : IProfileRepository
         }
     }
 
+    public async Task UpdateUsernameAsync(Guid id, string username, CancellationToken cancellationToken = default)
+    {
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync(cancellationToken);
+
+        const string sql = @"
+        UPDATE identity.profiles
+        SET username = @Username
+        where id = @Id;";
+
+        var rows = await connection.ExecuteAsync(new CommandDefinition(sql,
+            new { username = username, id = id },
+            cancellationToken: cancellationToken));
+
+        if (rows == 0)
+        {
+            throw new Exception($"Profile '{id}' was not found.");
+        }
+    }
+
+    public async Task UpdateDescriptionAsync(Guid id, string description, CancellationToken cancellationToken = default)
+    {
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync(cancellationToken);
+
+        const string sql = @"
+        UPDATE identity.profiles
+        SET description = @Description
+        where id = @Id;";
+
+        var rows = await connection.ExecuteAsync(new CommandDefinition(sql,
+            new { Description = description, Id = id },
+            cancellationToken: cancellationToken));
+
+        if (rows == 0)
+        {
+            throw new Exception($"Profile '{id}' was not found.");
+        }
+    }
+
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         await using var connection = new NpgsqlConnection(_connectionString);

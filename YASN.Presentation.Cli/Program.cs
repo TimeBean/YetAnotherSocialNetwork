@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using YASN.Application.Users.Profile.Create;
 using YASN.Application.Users.Profile.Remove;
+using YASN.Application.Users.Profile.Update;
 using YASN.Domain.Repository;
 using YASN.Infrastructure;
 
@@ -17,20 +18,21 @@ namespace YASN.Presentation.Cli
 
             using var scope = host.Services.CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-    
+
             Console.Write("Enter username: ");
             var username = Console.ReadLine();
 
-            Guid profileId;
-            if (!string.IsNullOrWhiteSpace(username))
-            {
-                profileId = await mediator.Send(new CreateProfileCommand(username));
-                Console.WriteLine($"Created profile: {profileId}");
-            }
-            else
-            {
-                throw new NullReferenceException();
-            }
+            var profileId = await mediator.Send(new CreateProfileCommand(username!));
+            Console.WriteLine($"Created profile: {profileId}");
+
+            Console.Write("Ready change username?");
+            Console.ReadLine();
+
+            Console.Write("Enter username: ");
+            var newUsername = Console.ReadLine();
+
+            await mediator.Send(new UpdateProfileUsernameCommand(profileId, newUsername!));
+            Console.WriteLine($"Username changed for {profileId}");
             
             Console.Write("Ready delete profile?");
             Console.ReadLine();
@@ -44,13 +46,14 @@ namespace YASN.Presentation.Cli
                 .ConfigureServices((context, services) =>
                 {
                     var connectionString = context.Configuration.GetConnectionString("DefaultConnection")
-                                           ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-                    
+                                           ?? throw new InvalidOperationException(
+                                               "Connection string 'DefaultConnection' not found.");
+
                     services.AddMediatR(cfg =>
                         cfg.RegisterServicesFromAssembly(typeof(CreateProfileHandler).Assembly));
                     services.AddMediatR(cfg =>
                         cfg.RegisterServicesFromAssembly(typeof(RemoveProfileHandler).Assembly));
-                    
+
                     services.AddScoped<IProfileRepository>(_ =>
                         new DatabaseProfileRepository(connectionString));
                 });

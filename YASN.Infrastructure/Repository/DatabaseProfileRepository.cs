@@ -3,7 +3,7 @@ using Npgsql;
 using YASN.Domain.Repository;
 using YASN.Domain.Users;
 
-namespace YASN.Infrastructure;
+namespace YASN.Infrastructure.Repository;
 
 public class DatabaseProfileRepository : IProfileRepository
 {
@@ -19,7 +19,7 @@ public class DatabaseProfileRepository : IProfileRepository
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync(cancellationToken);
 
-        const string sql = "SELECT * FROM identity.profiles WHERE id = @id";
+        const string sql = "SELECT 1 FROM identity.profiles WHERE id = @id";
         return await connection.QueryFirstOrDefaultAsync<Profile>(new  CommandDefinition(sql, new { id }, cancellationToken: cancellationToken));
     }
 
@@ -44,10 +44,10 @@ public class DatabaseProfileRepository : IProfileRepository
         SELECT EXISTS (
             SELECT 1 
             FROM identity.profiles 
-            WHERE username = @username
+            WHERE username = @Username
         );";
 
-        return await connection.ExecuteScalarAsync<bool>(new CommandDefinition(sql, new { username },
+        return await connection.ExecuteScalarAsync<bool>(new CommandDefinition(sql, new { Username = username },
             cancellationToken: cancellationToken));
     }
 
@@ -141,7 +141,7 @@ public class DatabaseProfileRepository : IProfileRepository
         }
     }
 
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task RemoveAsync(Guid id, CancellationToken cancellationToken = default)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync(cancellationToken);
@@ -159,7 +159,7 @@ public class DatabaseProfileRepository : IProfileRepository
         }
     }
 
-    public async Task DeleteAsync(string username, CancellationToken cancellationToken = default)
+    public async Task RemoveAsync(string username, CancellationToken cancellationToken = default)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync(cancellationToken);

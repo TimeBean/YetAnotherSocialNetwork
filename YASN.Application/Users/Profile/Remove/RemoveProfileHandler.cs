@@ -12,27 +12,27 @@ public class RemoveProfileHandler : IRequestHandler<RemoveProfileByIdCommand>, I
         _profileRepository = profileRepository;
     }
     
-    public async Task Handle(RemoveProfileByIdCommand removeProfileByIdCommand, CancellationToken cancellationToken)
+    public async Task Handle(RemoveProfileByIdCommand byIdCommand, CancellationToken cancellationToken)
     {
-        var exists = await _profileRepository.ExistsAsync(removeProfileByIdCommand.Id, cancellationToken);
+        var exists = await _profileRepository.ExistsAsync(byIdCommand.Id, cancellationToken);
         
         if (!exists)
         {
-            throw new Exception($"Profile with id:{removeProfileByIdCommand.Id} does not exists");
+            throw new Exception($"Profile with id:{byIdCommand.Id} does not exists");
         }
         
-        await _profileRepository.DeleteAsync(removeProfileByIdCommand.Id, cancellationToken);
+        await _profileRepository.DeleteAsync(byIdCommand.Id, cancellationToken);
     }
 
-    public async Task Handle(RemoveProfileByUsernameCommand removeProfileByUsernameCommand, CancellationToken cancellationToken)
+    public async Task Handle(RemoveProfileByUsernameCommand byUsernameCommand, CancellationToken cancellationToken)
     {
-        var exists = await _profileRepository.ExistsAsync(removeProfileByUsernameCommand.Username, cancellationToken);
+        var exists = await _profileRepository.ExistsAsync(byUsernameCommand.Username, cancellationToken);
         
         if (!exists)
         {
-            throw new Exception($"Profile with username:{removeProfileByUsernameCommand.Username} does not exists");
+            throw new Exception($"Profile with username:{byUsernameCommand.Username} does not exists");
         }
         
-        await _profileRepository.DeleteAsync(removeProfileByUsernameCommand.Username, cancellationToken);
+        await _profileRepository.DeleteAsync(byUsernameCommand.Username, cancellationToken);
     }
 }
